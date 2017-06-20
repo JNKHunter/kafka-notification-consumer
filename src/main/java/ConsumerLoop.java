@@ -3,6 +3,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import redis.clients.jedis.Jedis;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ public class ConsumerLoop implements Runnable {
     private final KafkaConsumer<String, String> consumer;
     private final List<String> topics;
     private final int id;
+    private Jedis jedis;
 
     public ConsumerLoop(int id,
                         String groupId,
@@ -28,9 +30,10 @@ public class ConsumerLoop implements Runnable {
         props.put("group.id", groupId);
         props.put("key.deserializer", StringDeserializer.class.getName());
         props.put("value.deserializer", StringDeserializer.class.getName());
+        this.jedis = new Jedis("localhost");
         this.consumer = new KafkaConsumer<>(props);
     }
-    
+
     public void run() {
         try {
             consumer.subscribe(topics);
@@ -38,7 +41,9 @@ public class ConsumerLoop implements Runnable {
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
                 for (ConsumerRecord<String, String> record : records) {
-                    System.out.println(this.id + ": " + record.value());
+                    System.out.println(record.value());
+                    String[] keyVal = record.value().split(",");
+                    jedis.set(keyVal[0], keyVal[1]);
                 }
             }
         } catch (WakeupException e) {
