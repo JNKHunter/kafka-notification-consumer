@@ -30,8 +30,7 @@ public class ConsumerLoop implements Runnable {
         props.put("value.deserializer", StringDeserializer.class.getName());
         this.consumer = new KafkaConsumer<>(props);
     }
-
-    @Override
+    
     public void run() {
         try {
             consumer.subscribe(topics);
