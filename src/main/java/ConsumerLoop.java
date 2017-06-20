@@ -24,7 +24,7 @@ public class ConsumerLoop implements Runnable {
         this.id = id;
         this.topics = topics;
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
+        props.put("bootstrap.servers", "10.0.0.5:9092");
         props.put("group.id", groupId);
         props.put("key.deserializer", StringDeserializer.class.getName());
         props.put("value.deserializer", StringDeserializer.class.getName());
