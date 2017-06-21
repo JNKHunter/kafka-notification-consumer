@@ -43,7 +43,7 @@ public class ConsumerLoop implements Runnable {
                 for (ConsumerRecord<String, String> record : records) {
                     System.out.println(record.value());
                     String[] keyVal = record.value().split(",");
-                    jedis.set(keyVal[0], keyVal[1]);
+                    jedis.set("hosts", record.value());
                 }
             }
         } catch (WakeupException e) {
